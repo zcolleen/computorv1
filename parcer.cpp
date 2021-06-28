@@ -120,7 +120,7 @@ bool Parcer::parce() {
 
     _split(sides, _expression, "=");
     if (sides.size() != 2)
-        return false;
+        return _print_error(SYNTAX_ERROR);
     _split(first_side, sides[0], "+-");
     _split(second_side, sides[1], "+-");
 
