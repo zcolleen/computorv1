@@ -4,26 +4,33 @@
 
 Parcer::Parcer(string &&expression) : _coefficients(), _expression(expression) {}
 
-bool Parcer::_check_for_separator(const char &c, const string &separators)
+const char Parcer::_check_for_separator(const char &c, const string &separators)
 {
     for (const char &s : separators)
     {
         if (s == c)
-            return true;
+            return c;
     }
-    return false;
+    return 0;
 }
 
-void Parcer::_split(vector<string> &result, const string &input, const string &separators)
+void Parcer::_split(vector<string> &result, const string &input, const string &separators, int side)
 {
     int idx = 0;
     int i = 0;
+    char c;
 
+    _sign_of_coef[0] = side == FIRST_SIDE ? 1 : -1;
     for (; i < input.size(); ++i)
     {
-        if (_check_for_separator(input[i], separators)) {
-
+        c = _check_for_separator(input[i], separators);
+        if (c) {
             result.push_back(input.substr(idx, i - idx));
+            if (c == '-') {
+                _sign_of_coef[result.size()] = side == FIRST_SIDE ? -1 : 1;
+            }
+            else
+                _sign_of_coef[result.size()] = side == FIRST_SIDE ? 1 : -1;
             idx = i + 1;
         }
     }
@@ -52,7 +59,7 @@ void Parcer::_trim(string &str)
     str.erase(str.find_last_not_of(" ") + 1);
 }
 
-bool Parcer::_write_into_map(const string &str, size_t idx, int degree, float num)
+bool Parcer::_write_into_map(const string &str, size_t idx, int degree, float num, int token_num)
 {
     size_t degree_pos = 0;
 
@@ -64,7 +71,7 @@ bool Parcer::_write_into_map(const string &str, size_t idx, int degree, float nu
     }
     if (!_coefficients.count(degree))
         _coefficients[degree] = 0;
-    _coefficients[degree] += num;
+    _coefficients[degree] += num * _sign_of_coef[token_num];
     return true;
 }
 
@@ -94,12 +101,12 @@ bool Parcer::_validate(bool *validation, int &degree, const string &str, int idx
     return true;
 }
 
-bool Parcer::_parce_coefficients(string &str)
+bool Parcer::_parce_coefficients(string &str, int token_num)
 {
     int degree = 0;
     bool validation[3] = { false, false, false };
     size_t idx = 0;
-    _trim(str);
+    // _trim(str);
     float num = stof(str, &idx);
 
     for (; idx < str.size(); ++idx)
@@ -107,8 +114,22 @@ bool Parcer::_parce_coefficients(string &str)
         if (!_validate(validation, degree, str, idx))
             return _print_error(SYNTAX_ERROR);
     }
-    if (!_write_into_map(str, idx, degree, num))
+    if (!_write_into_map(str, idx, degree, num, token_num))
         return _print_error(SYNTAX_ERROR);
+    return true;
+}
+
+bool Parcer::_parce_sides(vector<string> &side)
+{
+    for (int i = 0; i < side.size(); ++i) {
+        _trim(side[i]);
+        if (side[i] == "") {
+            if (i != 0)
+                return false;
+        }
+        else if (!_parce_coefficients(side[i], i))
+            return false;
+    }
     return true;
 }
 
@@ -118,21 +139,15 @@ bool Parcer::parce() {
     vector<string> first_side;
     vector<string> second_side;
 
-    _split(sides, _expression, "=");
+    _split(sides, _expression, "=", 3);
     if (sides.size() != 2)
         return _print_error(SYNTAX_ERROR);
-    _split(first_side, sides[0], "+-");
-    _split(second_side, sides[1], "+-");
-
-    for (auto &f : first_side) {
-        if (!_parce_coefficients(f))
-            return false;
-    }
-
-    for (auto &f : second_side) {
-        if (!_parce_coefficients(f))
-            return false;
-    }
+    _split(first_side, sides[0], "+-", FIRST_SIDE);
+    if (!_parce_sides(first_side))
+        return false;
+    _split(second_side, sides[1], "+-", SECOND_SIDE);
+    if (!_parce_sides(second_side))
+        return false;
 
     for (auto &v : _coefficients) {
         cout << v.first << "  " << v.second << endl;
