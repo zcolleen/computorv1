@@ -155,3 +155,7 @@ bool Parcer::parce() {
     return true;
 }
 
+const map<int, float> &Parcer::get_coefficients() {
+    return _coefficients;
+}
+

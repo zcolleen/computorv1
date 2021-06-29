@@ -30,6 +30,7 @@ private:
     bool _parce_sides(vector<string> &side);
 public:
 
+    const map<int, float> &get_coefficients();
     Parcer(string &&expression);
     bool parce();
 
