@@ -7,4 +7,4 @@ include_directories(.)
 
 add_executable(computorv1
         parcer.cpp
-        parcer.hpp main.cpp)
+        parcer.hpp main.cpp computor.cpp computor.hpp)

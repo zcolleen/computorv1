@@ -4,6 +4,8 @@
 
 Parcer::Parcer(string &&expression) : _coefficients(), _expression(expression) {}
 
+Parcer::~Parcer() = default;
+
 const char Parcer::_check_for_separator(const char &c, const string &separators)
 {
     for (const char &s : separators)
@@ -133,6 +135,13 @@ bool Parcer::_parce_sides(vector<string> &side)
     return true;
 }
 
+void Parcer::__print_coefs()
+{
+    for (auto &v : _coefficients) {
+        cout << v.first << "  " << v.second << endl;
+    }
+}
+
 bool Parcer::parce() {
 
     vector<string> sides;
@@ -148,14 +157,10 @@ bool Parcer::parce() {
     _split(second_side, sides[1], "+-", SECOND_SIDE);
     if (!_parce_sides(second_side))
         return false;
-
-    for (auto &v : _coefficients) {
-        cout << v.first << "  " << v.second << endl;
-    }
     return true;
 }
 
-const map<int, float> &Parcer::get_coefficients() {
+const map<int, float> &Parcer::get_coefficients() const {
     return _coefficients;
 }
 

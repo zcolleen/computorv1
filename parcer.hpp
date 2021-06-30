@@ -28,11 +28,14 @@ private:
     void _trim(string &str);
     bool _print_error(int error_num);
     bool _parce_sides(vector<string> &side);
+
 public:
 
-    const map<int, float> &get_coefficients();
+    ~Parcer();
+    const map<int, float> &get_coefficients() const;
     Parcer(string &&expression);
     bool parce();
+    void __print_coefs();
 
 };
 
