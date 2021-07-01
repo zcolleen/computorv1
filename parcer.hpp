@@ -12,6 +12,12 @@
 
 using namespace std;
 
+enum {
+    ZERO_DEGREE,
+    FIRST_DEGREE,
+    SECOND_DEGREE
+};
+
 class Parcer {
 
 private:

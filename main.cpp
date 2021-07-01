@@ -15,7 +15,10 @@ int main(int argc, char **argv)
         // computor.__debug();
         if (computor.init()) {
             computor.print_reduced_form();
-            computor.print_polynomial_degree();
+            if (computor.print_polynomial_degree()) {
+                computor.solve_equation();
+
+            }
         }
     }
 }
