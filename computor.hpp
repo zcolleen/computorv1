@@ -9,7 +9,7 @@ class Computor {
 
 private:
 
-    map<int, float> _coefficients;
+    map<float, float> _coefficients;
     unique_ptr<Parcer> _parce_ptr;
     void    _solve_zero_degree(float coefficient);
     void    _solve_first_degree(float first_coefficient, float zero_coefficient = 0);

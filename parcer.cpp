@@ -61,13 +61,13 @@ void Parcer::_trim(string &str)
     str.erase(str.find_last_not_of(" ") + 1);
 }
 
-bool Parcer::_write_into_map(const string &str, int degree, float num, int token_num)
+bool Parcer::_write_into_map(const string &str, float degree, float num, int token_num)
 {
     size_t degree_pos = 0;
 
     if ((degree_pos = str.find('^')) != string::npos) {
         if (degree_pos + 1 < str.size())
-            degree = stoi(str.substr(degree_pos + 1));
+            degree = stof(str.substr(degree_pos + 1));
         else
             return false;
     }
@@ -77,7 +77,7 @@ bool Parcer::_write_into_map(const string &str, int degree, float num, int token
     return true;
 }
 
-bool Parcer::_validate(bool *validation, int &degree, const string &str, int idx)
+bool Parcer::_validate(bool *validation, float &degree, const string &str, int idx)
 {
     if (!_check_forbidden_symbol(str[idx]))
         return false;
@@ -105,11 +105,16 @@ bool Parcer::_validate(bool *validation, int &degree, const string &str, int idx
 
 bool Parcer::_parce_coefficients(string &str, int token_num)
 {
-    int degree = 0;
+    float degree = 0;
     bool validation[3] = { false, false, false };
     size_t idx = 0;
-    // _trim(str);
-    float num = stof(str, &idx);
+    float num;
+    try {
+        num = stof(str, &idx);
+    }
+    catch(invalid_argument) {
+        num = 0;
+    }
 
     for (; idx < str.size(); ++idx)
     {
@@ -157,10 +162,19 @@ bool Parcer::parce() {
     _split(second_side, sides[1], "+-", SECOND_SIDE);
     if (!_parce_sides(second_side))
         return false;
+    auto it = _coefficients.begin();
+    while (it != _coefficients.end())
+    {
+        if (it->second == 0 && it->first != 0) {
+            it = _coefficients.erase(it);
+        }
+        else
+            ++it;
+    }
     return true;
 }
 
-const map<int, float> &Parcer::get_coefficients() const {
+const map<float, float> &Parcer::get_coefficients() const {
     return _coefficients;
 }
 

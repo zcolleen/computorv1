@@ -39,7 +39,11 @@ void Computor::_solve_second_degree(float second_coefficient, float first_coeffi
     float discriminant = first_coefficient * first_coefficient - 4 * second_coefficient * zero_coefficient;
 
     if (discriminant == 0) {
-        cout << "Discriminant is zero, the only solution is: " << endl << (-1) * first_coefficient / (2 * second_coefficient) << endl;
+        float solution = (-1) * first_coefficient / (2 * second_coefficient);
+        if (solution == 0)
+            cout << "Discriminant is zero, the only solution is: " << endl << "0" << endl;
+        else
+            cout << "Discriminant is zero, the only solution is: " << endl << solution << endl;
     }
     else if (discriminant > 0) {
         float root = _sqrt(discriminant);
@@ -66,27 +70,44 @@ void Computor::_solve_second_degree(float second_coefficient, float first_coeffi
 void Computor::_solve_first_degree(float first_coefficient, float zero_coefficient)
 {
     cout << "The solution is: " << endl;
-    cout << (-1) * zero_coefficient / first_coefficient << endl;
+    float solution = (-1) * zero_coefficient / first_coefficient;
+    if (solution == 0)
+        cout << "0" << endl;
+    else
+        cout << solution << endl;
 }
 
 
 void Computor::solve_equation()
 {
     auto max_degree = _coefficients.rbegin();
-    switch (max_degree->first) {
+    std::map<float, float>::reverse_iterator zero_degree;
 
+    switch ((int )max_degree->first) {
         case ZERO_DEGREE:
             _solve_zero_degree(max_degree->second);
             break;
         case FIRST_DEGREE:
-            _solve_first_degree(max_degree->second, (++max_degree)->second);
+            zero_degree = ++_coefficients.rbegin();
+            if (zero_degree == _coefficients.rend())
+                _solve_first_degree(max_degree->second, 0);
+            else
+                _solve_first_degree(max_degree->second, (++max_degree)->second);
             break;
         case SECOND_DEGREE:
             auto second_degree = ++_coefficients.rbegin();
-            if (second_degree->first == 1)
-                _solve_second_degree(max_degree->second, second_degree->second, (++second_degree)->second);
-            else
-                _solve_second_degree(max_degree->second, 0, second_degree->second);
+            if (second_degree->first == 1) {
+                if ((++second_degree) == _coefficients.rend())
+                    _solve_second_degree(max_degree->second, second_degree->second, 0);
+                else
+                    _solve_second_degree(max_degree->second, second_degree->second, (second_degree)->second);
+            }
+            else {
+                if (second_degree == _coefficients.rend())
+                    _solve_second_degree(max_degree->second, 0, 0);
+                else
+                    _solve_second_degree(max_degree->second, 0, second_degree->second);
+            }
             break;
     }
 }
@@ -98,6 +119,12 @@ bool Computor::print_polynomial_degree()
     if (it->first > 2) {
         cout << "The polynomial degree is strictly greater than 2, I can't solve." << endl;
         return false;
+    }
+    for (; it != _coefficients.rend(); ++it) {
+        if (it->first != (int )it->first) {
+            cout << "The polynomial degree is non whole, I can't solve." << endl;
+            return false;
+        }
     }
     return true;
 }
