@@ -15,13 +15,6 @@ bool Computor::init()
     return true;
 }
 
-void Computor::__debug()
-{
-    for (auto &m : _coefficients) {
-        cout << m.first << " " << m.second << endl;
-    }
-}
-
 void Computor::_solve_zero_degree(float coefficient)
 {
     if (coefficient == 0)
@@ -55,7 +48,18 @@ void Computor::_solve_second_degree(float second_coefficient, float first_coeffi
         cout << ((-1) * first_coefficient + root) / (2 * second_coefficient) << endl;
     }
     else {
-
+        float root = _sqrt((-1) * discriminant);
+        cout << "Discriminant is negative, the two solutions are: " << endl;
+        cout << ((-1) * first_coefficient) / (2 * second_coefficient);
+        if (second_coefficient < 0)
+            cout << "+" << - root / (2 * second_coefficient) << "i" << endl;
+        else
+            cout << - root / (2 * second_coefficient) << "i" << endl;
+        cout << ((-1) * first_coefficient) / (2 * second_coefficient);
+        if (second_coefficient < 0)
+            cout << root / (2 * second_coefficient) << "i" << endl;
+        else
+            cout << "+" << root / (2 * second_coefficient) << "i" << endl;
     }
 }
 
@@ -100,6 +104,7 @@ bool Computor::print_polynomial_degree()
 
 void Computor::print_reduced_form()
 {
+    cout << "Reduced form: ";
     for (auto it = _coefficients.begin(); it != _coefficients.end(); ++it)
     {
         if (it->second < 0)

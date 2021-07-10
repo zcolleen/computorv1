@@ -12,12 +12,10 @@ int main(int argc, char **argv)
 
         Computor computor((string(argv[1])));
 
-        // computor.__debug();
         if (computor.init()) {
             computor.print_reduced_form();
             if (computor.print_polynomial_degree()) {
                 computor.solve_equation();
-
             }
         }
     }

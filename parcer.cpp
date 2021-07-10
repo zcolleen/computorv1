@@ -6,7 +6,7 @@ Parcer::Parcer(string &&expression) : _coefficients(), _expression(expression) {
 
 Parcer::~Parcer() = default;
 
-const char Parcer::_check_for_separator(const char &c, const string &separators)
+char Parcer::_check_for_separator(const char &c, const string &separators)
 {
     for (const char &s : separators)
     {
@@ -19,7 +19,7 @@ const char Parcer::_check_for_separator(const char &c, const string &separators)
 void Parcer::_split(vector<string> &result, const string &input, const string &separators, int side)
 {
     int idx = 0;
-    int i = 0;
+    size_t i = 0;
     char c;
 
     _sign_of_coef[0] = side == FIRST_SIDE ? 1 : -1;
@@ -61,7 +61,7 @@ void Parcer::_trim(string &str)
     str.erase(str.find_last_not_of(" ") + 1);
 }
 
-bool Parcer::_write_into_map(const string &str, size_t idx, int degree, float num, int token_num)
+bool Parcer::_write_into_map(const string &str, int degree, float num, int token_num)
 {
     size_t degree_pos = 0;
 
@@ -116,14 +116,14 @@ bool Parcer::_parce_coefficients(string &str, int token_num)
         if (!_validate(validation, degree, str, idx))
             return _print_error(SYNTAX_ERROR);
     }
-    if (!_write_into_map(str, idx, degree, num, token_num))
+    if (!_write_into_map(str, degree, num, token_num))
         return _print_error(SYNTAX_ERROR);
     return true;
 }
 
 bool Parcer::_parce_sides(vector<string> &side)
 {
-    for (int i = 0; i < side.size(); ++i) {
+    for (size_t i = 0; i < side.size(); ++i) {
         _trim(side[i]);
         if (side[i] == "") {
             if (i != 0)
