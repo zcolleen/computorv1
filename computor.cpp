@@ -100,7 +100,7 @@ void Computor::solve_equation()
                 if ((++second_degree) == _coefficients.rend())
                     _solve_second_degree(max_degree->second, second_degree->second, 0);
                 else
-                    _solve_second_degree(max_degree->second, second_degree->second, (second_degree)->second);
+                    _solve_second_degree(max_degree->second, (++max_degree)->second, (second_degree)->second);
             }
             else {
                 if (second_degree == _coefficients.rend())
